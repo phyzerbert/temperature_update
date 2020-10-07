@@ -38,4 +38,8 @@ class User extends Authenticatable
     public function temperatures() {
         return $this->hasMany(Temperature::class);
     }
+
+    public function cards() {
+        return $this->hasMany(Card::class);
+    }
 }

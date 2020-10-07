@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 use App\User;
 use App\Temperature;
+use App\Card;
 use App\Tfile;
 use App\Setting;
 use App\Notification;
@@ -27,30 +28,38 @@ class TemperaturesImport implements ToArray
     }
     public function array(Array $rows)
     {   
+        ini_set('max_execution_time', '0');
         $top_limit = Setting::find(1)->top_limit;
         array_shift($rows);
         foreach ($rows as $row) {
             if(date('Y-m-d H:i:s', strtotime($row[0])) != $row[0]) continue;
             if($row[3] == 0) continue;
-            
-            $user = User::where('employee_id', intval($row[2]))->first();
-            if(!$user) {
-                $user = User::create([
-                    'employee_id' => intval($row[2]),
-                    'role' => 'user',
-                ]);
+            $card = Card::where('card_id', intval($row[2]))->first();
+            $user = '';
+            if(!$card) {
+                $card = Card::create(['card_id' => intval($row[2])]);
+            } else if ($card->user) {
+                $user = $card->user;
             }
+            
             $temperature = Temperature::create([
                 'entrance' => $this->entrance,
-                'user_id' => $user->id,
+                'user_id' => $user == '' ? null : $user->id,
+                'card_id' => intval($row[2]),
                 'datetime' => $row[0],
-                'temperature' => $row[3]
+                'temperature' => $row[3],
             ]);
 
             if($row[3] > $top_limit) {
-                $message = $user->name . " has a high fever of " . number_format($temperature->temperature, 2);
+                if($user) {
+                    $message = $user->name . " has a high fever of " . number_format($temperature->temperature, 2);
+                } else {
+                    $message = 'A employee has a high fever of ' . number_format($temperature->temperature, 2);
+                }
+                
                 $notification = Notification::create([
-                    'user_id' => $user->id,
+                    'user_id' => $user == '' ? null : $user->id,
+                    'card_id' => intval($row[2]),
                     'temperature_id' => $temperature->id,
                     'message' => $message,
                 ]);

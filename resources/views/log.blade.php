@@ -30,6 +30,7 @@
                                 <th>Date & Time</th>
                                 <th>Employee ID</th>
                                 <th>Employee Name</th>
+                                <th>Card ID</th>
                                 <th>Temperature</th>
                             </thead>
                             <tbody>
@@ -38,7 +39,8 @@
                                         <td>{{ (($data->currentPage() - 1 ) * $data->perPage() ) + $loop->iteration }}</td>
                                         <td>{{$item->datetime}}</td>
                                         <td>{{$item->user->employee_id ?? ''}}</td>
-                                        <td>{{$item->user->name}}</td>
+                                        <td>{{$item->user->name ?? ''}}</td>
+                                        <td>{{$item->card_id}}</td>
                                         <td>{{$item->temperature}}</td>
                                     </tr>
                                 @endforeach

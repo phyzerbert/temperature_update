@@ -18,6 +18,7 @@ class CreateTemperaturesTable extends Migration
             $table->integer('user_id')->nullable();
             $table->timestamp('datetime')->nullable();
             $table->string('entrance')->nullable();
+            $table->string('card_id')->nullable();
             $table->decimal('temperature', 4, 2)->default(36.5)->nullable();
             $table->timestamps();
         });

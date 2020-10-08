@@ -19,12 +19,6 @@ class LenelImport implements ToArray
         ini_set('max_execution_time', '0');
         array_shift($rows);
 
-        // User::create([
-        //     'employee_id' => intval($rows[0][2]),
-        //     'name' => $rows[0][1],
-        //     'role' => 'user',
-        // ]);
-
         DB::beginTransaction();
 
         foreach ($rows as $row) {
